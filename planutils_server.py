@@ -95,6 +95,9 @@ class PlanUtilSocket:
         
 
 if __name__ == "__main__":
+    # start = time.time()
+    # result = subprocess.run([Path(settings.PLANUTILS_PREFIX) / "packages" / "smtplan" / "run"] + ['domain.pddl','problem.pddl'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode()
+    # end = time.time()
     # result = popen('PLANUTILS_PREFIX="~/.planutils" PATH="$PATH:$PLANUTILS_PREFIX/bin" smtplan domain.pddl problem.pddl').read()
     # print(result)
     

@@ -3,8 +3,8 @@
 import time
 import socket
 import struct
-import subprocess   
-
+import subprocess  
+from os import path, walk
 from pathlib import Path
 
 from planutils import settings
@@ -19,8 +19,8 @@ class PlanUtilSocket:
         self._socket.listen(5)
         print("PlanUtils socket server ready.")
         # start the server
-        try:
-            while True:
+        while True:
+            try:
                 self.client_socket, client_addr = self._socket.accept()
                 print ('Got connection from', client_addr)
                 domain = self.receive()
@@ -28,10 +28,10 @@ class PlanUtilSocket:
                 solver = self.receive()
                 plan = self.plan(domain, problem, solver)
                 self.send(plan)
-        except KeyboardInterrupt:
-            print('Interruption received. Terminating program.')
-            self._socket.close()
-            return
+            except:
+                print('Interruption received. Terminating program.')
+                self._socket.close()
+                exit()
 
     """ receive problem and domain files from the websocket """
     def receive(self):
@@ -86,13 +86,26 @@ class PlanUtilSocket:
         start = time.time()
         result = subprocess.run([Path(settings.PLANUTILS_PREFIX) / "packages" / solver / "run"] + ['domain.pddl','problem.pddl'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode()
         end = time.time()
-        if '0.0' in result:
-            print('Solution found in {:.2f}s'.format(end-start))
-            return result
+        if solver=='smtplan':
+            if '0.0' in result:
+                print('Solution found in {:.2f}s'.format(end-start))
+                return result
+            else:
+                print('Received following error from the solver! \n{}'.format(result))
+                return result
+        elif solver=='lama':
+            fns = []
+            plans = ''
+            for root, dirs, files in walk("/pddl"):
+                for file in files:
+                    if file.startswith("sas_plan."):
+                        fns.append(path.join(root, file))
+            for fn in fns:
+                f = open(fn, "r")
+                plans+=f.read()+'\n'
+            return plans
         else:
-            print('Received following error from the solver! \n{}'.format(result))
             return result
-        
 
 if __name__ == "__main__":
     # start = time.time()

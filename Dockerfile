@@ -28,6 +28,7 @@ SHELL ["/bin/bash", "-c"]
 # RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc
 
 RUN /usr/local/bin/planutils install smtplan --yes
+RUN /usr/local/bin/planutils install lama --yes
 
 WORKDIR /pddl
 

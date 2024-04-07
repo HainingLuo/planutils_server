@@ -1,4 +1,4 @@
-FROM planutils
+FROM aiplanning/planutils:latest
 
 LABEL maintainer "Haining Luo <hl18@ic.ac.uk>"
 
